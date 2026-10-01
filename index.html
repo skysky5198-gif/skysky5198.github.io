@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프리미엄 콜드브루 - A/B Test 실험 페이지</title>
+
+    <!-- ⚠️ [VWO SmartCode] Dán đoạn mã Async SmartCode từ VWO của bạn vào giữa đây ⚠️ -->
+    <!-- Start VWO Async SmartCode -->
+    
+    <!-- End VWO Async SmartCode -->
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f5f6f7;
+            color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .product-card {
+            max-width: 420px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid #e1e4e8;
+        }
+
+        .product-image {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background-color: #eee;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: #111111;
+            color: #ffffff;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 4px;
+        }
+
+        .product-content {
+            padding: 24px;
+        }
+
+        .category {
+            font-size: 13px;
+            color: #777777;
+            margin-bottom: 6px;
+        }
+
+        .product-title {
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            color: #111111;
+        }
+
+        .price-box {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .current-price {
+            font-size: 26px;
+            font-weight: 800;
+            color: #111111;
+        }
+
+        .original-price {
+            font-size: 14px;
+            color: #999999;
+            text-decoration: line-through;
+        }
+
+        /* 🎯 Biến độc lập: Banner thông báo miễn phí vận chuyển (A/B Test Target) */
+        .shipping-banner {
+            background-color: #f0f7ff;
+            border: 1px solid #cce3ff;
+            color: #0056b3;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .shipping-detail {
+            font-size: 13px;
+            color: #666666;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .shipping-detail span {
+            font-weight: 600;
+            color: #333333;
+        }
+
+        /* 🎯 Biến phụ thuộc: Nút mua hàng (VWO Tracking Goal) */
+        .btn-buy {
+            width: 100%;
+            background-color: #000000;
+            color: #ffffff;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-buy:hover {
+            background-color: #333333;
+        }
+
+        .btn-buy:active {
+            transform: scale(0.99);
+        }
+
+        .toast-message {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="product-card">
+        <div class="product-image">
+            <span class="badge">BEST</span>
+            <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=600&q=80" alt="콜드브루 커피">
+        </div>
+
+        <div class="product-content">
+            <div class="category">식품 > 음료 > 커피</div>
+            <h1 class="product-title">[특가] 프리미엄 수제 콜드브루 원액 500ml</h1>
+
+            <div class="price-box">
+                <span class="current-price">15,900원</span>
+                <span class="original-price">20,000원</span>
+            </div>
+
+            <!-- 🎯 Phương án A (Control): Hiển thị mức giá chuẩn -->
+            <div class="shipping-banner" id="shipping-banner">
+                <span>🚚</span>
+                <span id="shipping-text">30,000원 이상 구매 시 무료배송</span>
+            </div>
+
+            <div class="shipping-detail">
+                기본 배송비: <span>3,000원</span> (CJ대한통운)
+            </div>
+
+            <!-- 🎯 Nút bấm đo lường CTR cho VWO -->
+            <button class="btn-buy" id="buy-button">구매하기</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast-message">구매하기 버튼이 클릭되었습니다.</div>
+
+    <script>
+        document.getElementById('buy-button').addEventListener('click', function() {
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        });
+    </script>
+
+</body>
+</html>
